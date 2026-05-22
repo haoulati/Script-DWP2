@@ -231,6 +231,52 @@ var H=`<div id="_xt"></div><div id="_xnc"></div>
 
 var wrap=document.createElement('div');wrap.id='_sd';wrap.innerHTML=H;document.body.appendChild(wrap);
 
+// ── BIND ALL EVENTS IMMEDIATELY ──────────────────────────────────────────────
+// ✅ Moved here (right after DOM insertion) so events work even if later code crashes
+// Function declarations below are hoisted, so they're accessible here.
+try {
+  g('_xstb').addEventListener('click', function(){ps();});
+  g('_btn_save').addEventListener('click', function(){sv();});
+  g('_btn_fsaf').addEventListener('click', function(){sf();});
+  g('_btn_aging').addEventListener('click', function(){sa();});
+  g('_btn_db').addEventListener('click', function(){showDb();});
+  g('_btn_pending').addEventListener('click', function(){showPending();});
+  g('_btn_csv').addEventListener('click', function(){dc();});
+  g('_btn_refresh').addEventListener('click', function(){fa();});
+  g('_xpb').addEventListener('click', function(){tp();});
+  g('_scl').addEventListener('click', function(){g('_sd').style.display='none';});
+  g('_btn_apply').addEventListener('click', function(){fa();});
+  g('_btn_screenshot').addEventListener('click', function(){ss();});
+  g('_btn_reset_removed').addEventListener('click', function(){rr();});
+  g('_xasb').addEventListener('click', function(){sas();});
+  g('_xcf').addEventListener('change', function(){af();});
+  g('_xaf').addEventListener('change', function(){af();});
+  g('_xao').addEventListener('change', function(){af();});
+  g('_xcy').addEventListener('change', function(){fa();});
+  g('_xdbc').addEventListener('change', function(){ld(this.value);});
+  g('_xpdcf').addEventListener('change', function(){fp();});
+  // Close modals on backdrop click
+  document.querySelectorAll('.xmov').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('show');});});
+  // Close modal buttons
+  g('_cl_xfm').addEventListener('click', function(){cm('_xfm');});
+  g('_cl_xam').addEventListener('click', function(){cm('_xam');});
+  g('_cl_xadm').addEventListener('click', function(){cm('_xadm');});
+  g('_cl_xpm2').addEventListener('click', function(){cm('_xpm2');});
+  g('_cl_xadm2').addEventListener('click', function(){cm('_xadm2');});
+  g('_cl_xidm').addEventListener('click', function(){cm('_xidm');});
+  g('_cl_xagm').addEventListener('click', function(){cm('_xagm');});
+  g('_cl_xssm').addEventListener('click', function(){cm('_xssm');});
+  g('_cl_xdbm').addEventListener('click', function(){cm('_xdbm');});
+  g('_cl_xpdm').addEventListener('click', function(){cm('_xpdm');});
+  // Table header sort
+  document.querySelectorAll('#_xpt thead th').forEach(function(th){
+    th.addEventListener('click', function(){st(parseInt(th.dataset.col));});
+  });
+  console.log('📦 Stow Dashboard: All events bound successfully');
+} catch(err) {
+  console.error('📦 Stow Dashboard: Event binding failed:', err);
+}
+
 // ── CORE LOGIC ───────────────────────────────────────────────────────────────
 var BASE=window.location.origin;
 var stowers=[],idleT={},removed=new Set(JSON.parse(localStorage.getItem('_xrm')||'[]'));
@@ -251,6 +297,7 @@ function cm(id){var e=g(id);if(e)e.classList.remove('show');}
 var _sccHeaders = {};
 var _apiKey = null;
 (function(){
+  try {
   var origFetch = window.fetch;
   window.fetch = function(url, opts){
     if(url && String(url).includes('amazon') && opts && opts.headers){
@@ -280,6 +327,7 @@ var _apiKey = null;
     }
     return origSetHeader.apply(this, arguments);
   };
+  } catch(e) { console.warn('📦 Stow Dashboard: fetch/XHR intercept failed:', e); }
 })();
 
 function api(rp,pn,rb,cb){
@@ -594,48 +642,6 @@ function loadSettings(){
 }
 function tp(){paused=!paused;var b=g('_xpb');if(b)b.textContent=paused?'▶':'⏸';if(!paused)fa();}
 function ps(){var c=prompt('Enter Station Code (e.g. DWP2):',station||'');if(c&&c.trim().length>=3){station=c.trim().toUpperCase();localStorage.setItem('stowStation',station);var b=g('_xstb');if(b)b.textContent=station+' ▾';fa();}}
-
-// ── BIND ALL EVENTS (no inline onclick!) ─────────────────────────────────────
-// ✅ FIX: Using addEventListener instead of inline onclick for reliability
-g('_xstb').addEventListener('click', ps);
-g('_btn_save').addEventListener('click', sv);
-g('_btn_fsaf').addEventListener('click', sf);
-g('_btn_aging').addEventListener('click', sa);
-g('_btn_db').addEventListener('click', showDb);
-g('_btn_pending').addEventListener('click', showPending);
-g('_btn_csv').addEventListener('click', dc);
-g('_btn_refresh').addEventListener('click', fa);
-g('_xpb').addEventListener('click', tp);
-g('_scl').addEventListener('click', function(){g('_sd').style.display='none';});
-g('_btn_apply').addEventListener('click', fa);
-g('_btn_screenshot').addEventListener('click', ss);
-g('_btn_reset_removed').addEventListener('click', rr);
-g('_xasb').addEventListener('click', sas);
-g('_xcf').addEventListener('change', af);
-g('_xaf').addEventListener('change', af);
-g('_xao').addEventListener('change', af);
-g('_xcy').addEventListener('change', fa);
-g('_xdbc').addEventListener('change', function(){ld(this.value);});
-g('_xpdcf').addEventListener('change', fp);
-
-// Close modals on backdrop click
-document.querySelectorAll('.xmov').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('show');});});
-// Close modal buttons
-g('_cl_xfm').addEventListener('click', function(){cm('_xfm');});
-g('_cl_xam').addEventListener('click', function(){cm('_xam');});
-g('_cl_xadm').addEventListener('click', function(){cm('_xadm');});
-g('_cl_xpm2').addEventListener('click', function(){cm('_xpm2');});
-g('_cl_xadm2').addEventListener('click', function(){cm('_xadm2');});
-g('_cl_xidm').addEventListener('click', function(){cm('_xidm');});
-g('_cl_xagm').addEventListener('click', function(){cm('_xagm');});
-g('_cl_xssm').addEventListener('click', function(){cm('_xssm');});
-g('_cl_xdbm').addEventListener('click', function(){cm('_xdbm');});
-g('_cl_xpdm').addEventListener('click', function(){cm('_xpdm');});
-
-// Table header sort
-document.querySelectorAll('#_xpt thead th').forEach(function(th){
-  th.addEventListener('click', function(){st(parseInt(th.dataset.col));});
-});
 
 // ── INIT (single call, no duplicates) ────────────────────────────────────────
 loadSettings();
